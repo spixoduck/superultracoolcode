@@ -29,6 +29,7 @@
 
 package org.firstinspires.ftc.teamcode.Teleops;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -39,14 +40,23 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.Mechanisms.ColorSen;
+import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.Mechanisms.Launcher;
 
-@TeleOp(name="color testing!🤤", group="Iterative OpMode")
+@TeleOp(name="color coloring with shooter!🤤")
+@Config
 public class ColorTest extends OpMode
 {
-    public ColorSen test = new ColorSen();
+    public static double servoPosition =0;
+    public ColorSen color = new ColorSen();
+    public Launcher launcher = new Launcher();
+    public boolean julianA = false;
+    public boolean julianB = false;
+    public boolean running = false;
     @Override
     public void init() {
-        test.init(hardwareMap,"ColorSen1");
+        color.init(hardwareMap,"ColorSen1");
+        launcher.init(hardwareMap);
     }
 
     /*
@@ -70,8 +80,43 @@ public class ColorTest extends OpMode
      */
     @Override
     public void loop() {
-        //test.printColor(telemetry);
-        telemetry.addData("color", test.getColor());
+        //color.printColor(telemetry);
+        ColorSen.DetectedColor detectedColor = color.getColor();
+        if(gamepad1.b&&!julianB){
+            julianB=true;
+            if(launcher.getNectar()){
+                launcher.changeMode(false);
+            }else{
+                launcher.changeMode(true);
+            }
+        }
+        if(!gamepad1.b){
+            julianB=false;
+        }
+//        if(detectedColor== ColorSen.DetectedColor.BLUE||detectedColor== ColorSen.DetectedColor.RED){
+//            launcher.changeMode(true);
+//        }else{
+//            launcher.changeMode(false);
+//        }
+        telemetry.addData("openPos",Constants.openPos);
+        telemetry.update();
+        Constants.openPos=servoPosition;
+        if(gamepad1.a&&!julianA){
+            julianA=true;
+            if(!running) {
+                launcher.runMotor(1);
+                running=true;
+            }
+            else {
+                launcher.runMotor(0);
+                running=false;
+            }
+        }
+        if(!gamepad1.a){
+            julianA=false;
+        }
+
+
     }
 
     /*
