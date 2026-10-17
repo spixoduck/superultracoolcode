@@ -3,7 +3,6 @@ package org.firstinspires.ftc.teamcode.Teleops;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -12,21 +11,19 @@ import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.teamcode.Mechanisms.ColorSen;
 import org.firstinspires.ftc.teamcode.Mechanisms.Launcher;
 import org.firstinspires.ftc.teamcode.Mechanisms.Transfer;
-import org.firstinspires.ftc.teamcode.pedro.Constants;
 
-@TeleOp(name="Main teleop👍✅")
+@TeleOp(name="fieldCentric")
 @Config
-public class MainTeleop extends OpMode {
+public class FieldCentricTeleop extends OpMode {
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry telemetry = dashboard.getTelemetry();
     DcMotor frontLeftMotor;
     DcMotor backLeftMotor;
     DcMotor frontRightMotor;
     DcMotor backRightMotor;
-    IMU imu = hardwareMap.get(IMU.class, "imu");
+    IMU imu;
     public boolean running = false;
     public Launcher launcher = new Launcher();
     public Transfer transfer = new Transfer();
@@ -38,7 +35,7 @@ public class MainTeleop extends OpMode {
         backLeftMotor = hardwareMap.dcMotor.get("bl");
         frontRightMotor = hardwareMap.dcMotor.get("fr");
         backRightMotor = hardwareMap.dcMotor.get("br");
-
+        imu  = hardwareMap.get(IMU.class, "imu");
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         // Adjust the orientation parameters to match your robot

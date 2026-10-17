@@ -17,7 +17,7 @@ public class Launcher {
     private boolean nectarSkibidi;
     //may have to switch direction of motor.
     public void init(HardwareMap hwMap){
-        launcher = hwMap.get(DcMotor.class,"fl");
+        launcher = hwMap.get(DcMotor.class,"shoot");
         launcher.setDirection(DcMotorSimple.Direction.REVERSE);
         //turret = hwMap.get(DcMotor.class,"turret");
         //hood = hwMap.get(Servo.class,"hood");
