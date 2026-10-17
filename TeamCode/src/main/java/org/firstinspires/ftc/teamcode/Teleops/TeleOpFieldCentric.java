@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Teleops;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-@TeleOp
+@TeleOp(name="mid")
 public class TeleOpFieldCentric extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
@@ -17,7 +17,6 @@ public class TeleOpFieldCentric extends LinearOpMode {
         DcMotor backLeftMotor = hardwareMap.dcMotor.get("bl");
         DcMotor frontRightMotor = hardwareMap.dcMotor.get("fr");
         DcMotor backRightMotor = hardwareMap.dcMotor.get("br");
-
         // Reverse the right side motors. This may be wrong for your setup.
         // If your robot moves backwards when commanded to go forwards,
         // reverse the left side instead.
