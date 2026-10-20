@@ -36,7 +36,7 @@ public class AprilTagWebcam {
                 .build();
         VisionPortal.Builder builder = new VisionPortal.Builder();
         builder.setCamera(hwMap.get(WebcamName.class, "WebcamTest")); // change according to name set on driver hub
-        builder.setCameraResolution(new Size(649,480 )); // change according to camera
+        builder.setCameraResolution(new Size(640,480 )); // change according to camera
         builder.addProcessor(aprilTagProcessor);
 
         visionPortal = builder.build();
@@ -52,32 +52,100 @@ public class AprilTagWebcam {
         return detectedTags;
     }
 
+
     public void displayDetectionTelemetry(AprilTagDetection detectedId) {
         if (detectedId == null) {
             return;
         }
-        AprilTagSingleDetection singleDet = (AprilTagSingleDetection) detectedId;
 
-        if (singleDet.metadata != null) {
-            telemetry.addLine(String.format("\n==== (ID %d) %s", singleDet.id, singleDet.metadata.name));
-            telemetry.addLine(String.format("XYZ %6.1f %6.1f %6.1f  (inch)", detectedId.ftcPose.x, detectedId.ftcPose.y, detectedId.ftcPose.z));
-            telemetry.addLine(String.format("PRY %6.1f %6.1f %6.1f  (deg)", detectedId.ftcPose.pitch, detectedId.ftcPose.roll, detectedId.ftcPose.yaw));
-            telemetry.addLine(String.format("RBE %6.1f %6.1f %6.1f  (inch, deg, deg)", detectedId.ftcPose.range, detectedId.ftcPose.bearing, detectedId.ftcPose.elevation));
+        if (detectedId instanceof AprilTagSingleDetection) {
+            AprilTagSingleDetection singleDet =
+                    (AprilTagSingleDetection) detectedId;
+
+            if (singleDet.metadata != null) {
+                telemetry.addLine(String.format(
+                        "\n==== (ID %d) %s",
+                        singleDet.id, singleDet.metadata.name));
+            } else {
+                telemetry.addLine(String.format(
+                        "\n==== (ID %d) Unknown", singleDet.id));
+                telemetry.addLine(String.format(
+                        "Center %6.0f %6.0f (pixels)",
+                        singleDet.center.x, singleDet.center.y));
+                return;
+            }
+
+        } else if (detectedId instanceof AprilTagClusterDetection) {
+            AprilTagClusterDetection clusterDet =
+                    (AprilTagClusterDetection) detectedId;
+
+            telemetry.addLine(String.format(
+                    "\n==== Cluster: %s", clusterDet.metadata.name));
+
+            telemetry.addLine(String.format(
+                    "Percent tags found: %d%%",
+                    clusterDet.percentClusterFound));
         } else {
-            telemetry.addLine(String.format("\n==== (ID %d) Unknown", singleDet.id));
-            telemetry.addLine(String.format("Center %6.0f %6.0f   (pixels)", singleDet.center.x, singleDet.center.y));
+            return;
         }
+
+        // Display position data for both single tags and clusters
+        if (detectedId.ftcPose != null) {
+            telemetry.addLine(String.format(
+                    "XYZ %6.1f %6.1f %6.1f (cm)",
+                    detectedId.ftcPose.x,
+                    detectedId.ftcPose.y,
+                    detectedId.ftcPose.z));
+
+            telemetry.addLine(String.format(
+                    "PRY %6.1f %6.1f %6.1f (deg)",
+                    detectedId.ftcPose.pitch,
+                    detectedId.ftcPose.roll,
+                    detectedId.ftcPose.yaw));
+
+            telemetry.addLine(String.format(
+                    "RBE %6.1f %6.1f %6.1f (cm, deg, deg)",
+                    detectedId.ftcPose.range,
+                    detectedId.ftcPose.bearing,
+                    detectedId.ftcPose.elevation));
         }
+    }
+
+
 
 
     public AprilTagDetection getTagBySpecificId(int id) {
         for (AprilTagDetection detection : detectedTags) {
-            if (detection.id == id){
-                return detection;
+
+            if (detection instanceof AprilTagSingleDetection) {
+                AprilTagSingleDetection singleDet =
+                        (AprilTagSingleDetection) detection;
+
+                if (singleDet.id == id) {
+                    return singleDet;
+                }
             }
         }
         return null;
     }
+
+    public AprilTagClusterDetection getClusterByName(String name) {
+        for (AprilTagDetection detection : detectedTags) {
+
+            if (detection instanceof AprilTagClusterDetection) {
+
+                AprilTagClusterDetection cluster =
+                        (AprilTagClusterDetection) detection;
+
+                if (cluster.metadata.name.equals(name)) {
+                    return cluster;
+                }
+            }
+        }
+
+        return null;
+    }
+
 
     public void stop() {
         if (visionPortal != null) {
