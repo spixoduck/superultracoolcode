@@ -1,43 +1,42 @@
-
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode; // Changed to LinearOpMode
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 
-@Autonomous
-public class AprilTagWebcamTest extends OpMode {
+@Autonomous(name="CamTest")
+public class AprilTagWebcamTest extends LinearOpMode { // Changed inheritance
 
     AprilTagWebcam aprilTagWebcam = new AprilTagWebcam();
 
     @Override
-    public void init() {
+    public void runOpMode() {
+        // 1. Initialize the camera during the INIT phase
         aprilTagWebcam.init(hardwareMap, telemetry);
-    }
 
-    @Override
-    public void loop() {
-        // Update the detected AprilTags and clusters
-        aprilTagWebcam.update();
+        telemetry.addData("Status", "Initialized. Open Camera Stream now!");
+        telemetry.update();
 
-        // Show how many detections were found
-        telemetry.addData("Detections",
-                aprilTagWebcam.getDetectedTags().size());
-
-        // Display every detection
-        for (AprilTagDetection detection :
-                aprilTagWebcam.getDetectedTags()) {
-
-            aprilTagWebcam.displayDetectionTelemetry(detection);
+        // 2. This loops CONTINUOUSLY during INIT so the stream stays alive
+        while (opModeInInit()) {
+            aprilTagWebcam.update();
+            telemetry.addData("Detections", aprilTagWebcam.getDetectedTags().size());
+            for (AprilTagDetection detection : aprilTagWebcam.getDetectedTags()) {
+                aprilTagWebcam.displayDetectionTelemetry(detection);
+            }
+            telemetry.update();
+            sleep(20); // Small delay to save CPU cycles
         }
 
-        // Send telemetry to Driver Station
-        telemetry.update();
-    }
+        // 3. Wait for the driver to press the START button
+        waitForStart();
 
-    @Override
-    public void stop() {
+        // 4. This runs after START is pressed
+        while (opModeIsActive()) {
+            // Your autonomous movement or scoring code goes here
+        }
+
+        // 5. Clean up when stopped
         aprilTagWebcam.stop();
     }
 }

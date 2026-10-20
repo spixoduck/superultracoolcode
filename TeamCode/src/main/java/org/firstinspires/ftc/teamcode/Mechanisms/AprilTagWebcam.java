@@ -35,7 +35,7 @@ public class AprilTagWebcam {
                 .setOutputUnits(DistanceUnit.CM, AngleUnit.DEGREES)
                 .build();
         VisionPortal.Builder builder = new VisionPortal.Builder();
-        builder.setCamera(hwMap.get(WebcamName.class, "WebcamTest")); // change according to name set on driver hub
+        builder.setCamera(hwMap.get(WebcamName.class, "Webcam 1")); // change according to name set on driver hub
         builder.setCameraResolution(new Size(640,480 )); // change according to camera
         builder.addProcessor(aprilTagProcessor);
 
