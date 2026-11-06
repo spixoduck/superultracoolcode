@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Mechanisms.Launcher;
 import org.firstinspires.ftc.teamcode.Mechanisms.Transfer;
 
-@TeleOp(name="Main teleop👍✅")
+@TeleOp(name="Greased teleop👍✅")
 @Config
 public class RobotCentricTeleOp extends OpMode {
     FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -64,7 +64,7 @@ public class RobotCentricTeleOp extends OpMode {
     @Override
     public void loop() {
         double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-        double x = gamepad1.left_stick_x;
+        double x = -gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
 
         // Rotate the movement direction counter to the bot's rotation
@@ -98,20 +98,6 @@ public class RobotCentricTeleOp extends OpMode {
         }
         if (!gamepad1.a) {
             julianA = false;
-        }
-        if (gamepad1.b && !julianB) {
-            julianB = true;
-            if(launcher.getMode()) {
-                launcher.changeMode(false);
-            }
-            else{
-                launcher.changeMode(true);
-            }
-        }
-        //launcher.setSwitcher(servoPosition);
-        //launcher.setHood(hoodPos);
-        if (!gamepad1.b) {
-            julianB = false;
         }
     }
 

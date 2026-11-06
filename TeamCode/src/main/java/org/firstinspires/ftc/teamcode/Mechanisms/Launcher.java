@@ -17,21 +17,21 @@ public class Launcher {
     private boolean nectarSkibidi;
     //may have to switch direction of motor.
     public void init(HardwareMap hwMap){
-        launcher = hwMap.get(DcMotor.class,"shoot");
+        launcher = hwMap.get(DcMotor.class,"bl"); //change this to shoot
         launcher.setDirection(DcMotorSimple.Direction.REVERSE);
         //turret = hwMap.get(DcMotor.class,"turret");
         //hood = hwMap.get(Servo.class,"hood");
-        switcher = hwMap.get(Servo.class,"switch");
+        //switcher = hwMap.get(Servo.class,"switch");
     }
-    public boolean changeMode(boolean nectar){
-        nectarSkibidi=nectar;
-        if(nectar){
-            switcher.setPosition(Constants.openPos);
-        }else{
-            switcher.setPosition(0);
-        }
-        return true;
-    }
+//    public boolean changeMode(boolean nectar){
+//        nectarSkibidi=nectar;
+//        if(nectar){
+//            switcher.setPosition(Constants.openPos);
+//        }else{
+//            switcher.setPosition(0);
+//        }
+//        return true;
+//    }
     public void runMotor(double power){
         launcher.setPower(power);
     }

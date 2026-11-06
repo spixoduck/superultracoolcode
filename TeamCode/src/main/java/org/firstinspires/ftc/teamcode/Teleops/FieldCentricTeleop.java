@@ -14,7 +14,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Mechanisms.Launcher;
 import org.firstinspires.ftc.teamcode.Mechanisms.Transfer;
 
-@TeleOp(name="fieldCentric")
+@TeleOp(name="don't use")
 @Config
 public class FieldCentricTeleop extends OpMode {
     FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -24,29 +24,29 @@ public class FieldCentricTeleop extends OpMode {
     DcMotor frontRightMotor;
     DcMotor backRightMotor;
     IMU imu;
-    public boolean running = false;
-    public Launcher launcher = new Launcher();
-    public Transfer transfer = new Transfer();
-    public boolean julianA = false;
-    public boolean julianB = false;
+//    public boolean running = false;
+//    public Launcher launcher = new Launcher();
+//    public Transfer transfer = new Transfer();
+//    public boolean julianA = false;
+//    public boolean julianB = false;
     @Override
     public void init() {
         frontLeftMotor = hardwareMap.dcMotor.get("fl");
         backLeftMotor = hardwareMap.dcMotor.get("bl");
         frontRightMotor = hardwareMap.dcMotor.get("fr");
         backRightMotor = hardwareMap.dcMotor.get("br");
-        imu  = hardwareMap.get(IMU.class, "imu");
+        //imu  = hardwareMap.get(IMU.class, "imu");
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         // Adjust the orientation parameters to match your robot
-        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
-        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-        imu.initialize(parameters);
+//        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+//                RevHubOrientationOnRobot.LogoFacingDirection.UP,
+//                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
+//        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
+//        imu.initialize(parameters);
 
-        launcher.init(hardwareMap);
-        transfer.init(hardwareMap);
+//        launcher.init(hardwareMap);
+//        transfer.init(hardwareMap);
     }
 
     /*
@@ -73,9 +73,9 @@ public class FieldCentricTeleop extends OpMode {
         double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
         double x = gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
-        if (gamepad1.options) {
-            imu.resetYaw();
-        }
+//        if (gamepad1.options) {
+//            imu.resetYaw();
+//        }
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         // Rotate the movement direction counter to the bot's rotation
@@ -92,41 +92,41 @@ public class FieldCentricTeleop extends OpMode {
         backLeftMotor.setPower(backLeftPower);
         frontRightMotor.setPower(frontRightPower);
         backRightMotor.setPower(backRightPower);
-        if(gamepad1.left_trigger>0.5){
-            transfer.in();
-        }
-        else if(gamepad1.right_trigger>.5) {
-            transfer.out();
-        }else{
-            transfer.stop();
-        }
-        if (gamepad1.a && !julianA) {
-            julianA = true;
-            if (!running) {
-                launcher.runMotor(1);
-                running = true;
-            } else {
-                launcher.runMotor(0);
-                running = false;
-            }
-        }
-        if (!gamepad1.a) {
-            julianA = false;
-        }
-        if (gamepad1.b && !julianB) {
-            julianB = true;
-            if(launcher.getMode()) {
-                launcher.changeMode(false);
-            }
-            else{
-                launcher.changeMode(true);
-            }
-        }
-        //launcher.setSwitcher(servoPosition);
-        //launcher.setHood(hoodPos);
-        if (!gamepad1.b) {
-            julianB = false;
-        }
+//        if(gamepad1.left_trigger>0.5){
+//            transfer.in();
+//        }
+//        else if(gamepad1.right_trigger>.5) {
+//            transfer.out();
+//        }else{
+//            transfer.stop();
+//        }
+//        if (gamepad1.a && !julianA) {
+//            julianA = true;
+//            if (!running) {
+//                launcher.runMotor(1);
+//                running = true;
+//            } else {
+//                launcher.runMotor(0);
+//                running = false;
+//            }
+//        }
+//        if (!gamepad1.a) {
+//            julianA = false;
+//        }
+//        if (gamepad1.b && !julianB) {
+//            julianB = true;
+//            if(launcher.getMode()) {
+//                launcher.changeMode(false);
+//            }
+//            else{
+//                launcher.changeMode(true);
+//            }
+//        }
+//        //launcher.setSwitcher(servoPosition);
+//        //launcher.setHood(hoodPos);
+//        if (!gamepad1.b) {
+//            julianB = false;
+//        }
     }
 
     /*

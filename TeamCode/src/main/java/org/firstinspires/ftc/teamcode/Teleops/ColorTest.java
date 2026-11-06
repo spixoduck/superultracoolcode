@@ -22,6 +22,7 @@ public class ColorTest extends OpMode {
     public static double servoPosition=0.1;
     public ColorSen color = new ColorSen();
     public Launcher launcher = new Launcher();
+    public DcMotor test;
     public boolean julianA = false;
     public boolean julianB = false;
     public boolean servOn = false;
@@ -32,7 +33,7 @@ public class ColorTest extends OpMode {
     public void init() {
         //color.init(hardwareMap, "ColorSen1");
         launcher.init(hardwareMap);
-        servo = hardwareMap.get(Servo.class,"switch");
+        test=hardwareMap.get(DcMotor.class,"fl");
     }
 
     /*
@@ -58,25 +59,8 @@ public class ColorTest extends OpMode {
     public void loop() {
         //color.printColor(telemetry);
         //ColorSen.DetectedColor detectedColor = color.getColor();
-        if (gamepad1.b && !julianB) {
-            julianB = true;
-            if(servOn) {
-                servo.setPosition(.15);
-                servOn=false;
-
-
-
-            }
-            else{
-                servo.setPosition(0);
-                servOn=true;
-            }
-        }
         //launcher.setSwitcher(servoPosition);
         //launcher.setHood(hoodPos);
-        if (!gamepad1.b) {
-            julianB = false;
-        }
 //        if(detectedColor== ColorSen.DetectedColor.BLUE||detectedColor== ColorSen.DetectedColor.RED){
 //            launcher.changeMode(true);
 //        }else{
@@ -89,18 +73,20 @@ public class ColorTest extends OpMode {
         if (gamepad1.a && !julianA) {
             julianA = true;
             if (!running) {
-                launcher.runMotor(1);
+                test.setPower(1);
                 running = true;
             } else {
-                launcher.runMotor(0);
+                test.setPower(0);
                 running = false;
             }
         }
         if (!gamepad1.a) {
             julianA = false;
         }
+        telemetry.addData("sigmaPos",test.getCurrentPosition());
+        telemetry.update();
         //servo.setPosition(servoPosition);
-        telemetry.addData("servoPosition", servoPosition);
+
     }
 
     /*
