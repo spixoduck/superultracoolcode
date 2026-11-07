@@ -16,7 +16,7 @@ import org.firstinspires.ftc.teamcode.Mechanisms.PIDFController;
 @TeleOp(name="color testing with shooter!")
 @Config
 public class shootertuning extends OpMode {
-    public static double kp=0.008,ki,kd=0.00001,kf=0.00039,targetSpeed;
+    public static double kp=0.008 ,ki,kd=0.00001,kf=0.00039,targetSpeed;
     public DcMotorEx launcher;
     public static double DASH_TEST = 1.0;
     public DcMotor transfer;
