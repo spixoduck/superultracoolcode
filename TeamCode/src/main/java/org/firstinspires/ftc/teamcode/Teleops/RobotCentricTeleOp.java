@@ -17,6 +17,9 @@ import org.firstinspires.ftc.teamcode.Mechanisms.Transfer;
 @TeleOp(name="Greased teleop👍✅")
 @Config
 public class RobotCentricTeleOp extends OpMode {
+    public DcMotor launcher;
+    public DcMotor transfer;
+    public DcMotor intake;
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry telemetry = dashboard.getTelemetry();
     DcMotor frontLeftMotor;
@@ -24,8 +27,6 @@ public class RobotCentricTeleOp extends OpMode {
     DcMotor frontRightMotor;
     DcMotor backRightMotor;
     public boolean running = false;
-    public Launcher launcher = new Launcher();
-    public Transfer transfer = new Transfer();
     public boolean julianA = false;
     public boolean julianB = false;
     @Override
@@ -38,8 +39,12 @@ public class RobotCentricTeleOp extends OpMode {
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         // Adjust the orientation parameters to match your robot
-        launcher.init(hardwareMap);
-        transfer.init(hardwareMap);
+        launcher = hardwareMap.get(DcMotor.class, "shoot");
+        launcher.setDirection(DcMotorSimple.Direction.REVERSE);
+        intake = hardwareMap.get(DcMotor.class,"int");
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        transfer=hardwareMap.get(DcMotor.class,"trans");
+
     }
 
     /*
@@ -64,7 +69,7 @@ public class RobotCentricTeleOp extends OpMode {
     @Override
     public void loop() {
         double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
-        double x = -gamepad1.left_stick_x;
+        double x = gamepad1.left_stick_x;
         double rx = gamepad1.right_stick_x;
 
         // Rotate the movement direction counter to the bot's rotation
@@ -78,26 +83,29 @@ public class RobotCentricTeleOp extends OpMode {
         backLeftMotor.setPower(backLeftPower);
         frontRightMotor.setPower(frontRightPower);
         backRightMotor.setPower(backRightPower);
-        if(gamepad1.left_trigger>0.5){
-            transfer.in();
-        }
-        else if(gamepad1.right_trigger>.5) {
-            transfer.out();
-        }else{
-            transfer.stop();
-        }
+
         if (gamepad1.a && !julianA) {
             julianA = true;
             if (!running) {
-                launcher.runMotor(1);
+                launcher.setPower(1);
                 running = true;
             } else {
-                launcher.runMotor(0);
+                launcher.setPower(0);
                 running = false;
             }
         }
         if (!gamepad1.a) {
             julianA = false;
+        }
+        if(gamepad1.left_trigger>0.5){
+            intake.setPower(.6);
+        }else{
+            intake.setPower(0);
+        }
+        if(gamepad1.right_trigger>0.5){
+            transfer.setPower(.6);
+        }else{
+            transfer.setPower(0);
         }
     }
 
