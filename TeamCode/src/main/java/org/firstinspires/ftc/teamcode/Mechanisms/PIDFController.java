@@ -25,8 +25,7 @@ public class PIDFController {
     }
     public double run(){
         double error = target-current;
-        double value = p*error+i*iHelp*(timer.seconds()-pastTime)+d*(error-dHelp)/(timer.seconds()-pastTime)+f*Math.signum(error);
-        pastTime=timer.seconds();
+        double value = p*error+i*iHelp+d*(error-dHelp)+f*target;
         return value;
     }
     public double runSquid(){

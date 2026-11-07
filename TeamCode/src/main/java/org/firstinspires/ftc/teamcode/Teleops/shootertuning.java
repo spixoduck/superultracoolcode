@@ -7,6 +7,7 @@ import com.pedropathing.utils.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Mechanisms.PIDFController;
@@ -17,11 +18,11 @@ public class shootertuning extends OpMode {
     public static double kp=0.001,ki,kd,kf,targetSpeed;
     public static double hoodPos;
     public static double servoPosition=0.1;
-    public DcMotor launcher;
+    public DcMotorEx launcher;
     public static double DASH_TEST = 1.0;
     public DcMotor transfer;
     public Timer timer = new Timer();
-    public double pastTime, pastPosition;
+    public double pastTime, pastPosition,pastSpeed;
     public DcMotor intake;
     public PIDFController speedController = new PIDFController(kp,ki,kd,kf);
     FtcDashboard dashboard;
@@ -36,7 +37,7 @@ public class shootertuning extends OpMode {
                 dashboard.getTelemetry()
         );
 
-        launcher = hardwareMap.get(DcMotor.class, "shoot");
+        launcher = hardwareMap.get(DcMotorEx.class, "shoot");
         launcher.setDirection(DcMotorSimple.Direction.REVERSE);
         intake = hardwareMap.get(DcMotor.class,"int");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -57,7 +58,8 @@ public class shootertuning extends OpMode {
     @Override
     public void loop() {
         speedController.setPIDFValues(kp,ki,kd,kf);
-        double currentSpeed = (launcher.getCurrentPosition()-pastPosition)/(timer.seconds()-pastTime);
+
+        double currentSpeed = launcher.getVelocity();
         //color.printColor(telemetry);
         //ColorSen.DetectedColor detectedColor = color.getColor();
         //launcher.setSwitcher(servoPosition);
@@ -89,12 +91,12 @@ public class shootertuning extends OpMode {
 
         setLaunchSpeed(currentSpeed,targetSpeed);
         if(gamepad1.left_trigger>0.5){
-            intake.setPower(.6);
+            intake.setPower(1);
         }else{
             intake.setPower(0);
         }
         if(gamepad1.right_trigger>0.5){
-            transfer.setPower(.6);
+            transfer.setPower(.8);
         }else{
             transfer.setPower(0);
         }
@@ -108,6 +110,7 @@ public class shootertuning extends OpMode {
         telemetry.update();
         //servo.setPosition(servoPosition);
         pastPosition=launcher.getCurrentPosition();
+        pastSpeed = currentSpeed;
         pastTime=timer.seconds();
     }
 
