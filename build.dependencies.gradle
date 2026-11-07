@@ -1,8 +1,9 @@
 repositories {
     mavenCentral()
-    maven { url 'https://repo.dairy.foundation/releases/'}
     maven { url = 'https://maven.brott.dev/' }
+    maven { url = 'https://jitpack.io' }
     maven { url = "https://mymaven.bylazar.com/releases" }
+    maven { url = "https://maven.pedropathing.com/" }
     google() // Needed for androidx
 }
 
@@ -17,10 +18,10 @@ dependencies {
     implementation 'org.firstinspires.ftc:Vision:12.0.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
 
-    implementation 'com.pedropathing:revhub:3.0.1'
-//    implementation 'com.pedropathing:tuning:1.0.1'
-
     implementation 'com.acmerobotics.dashboard:dashboard:0.5.1'
+
+    implementation 'com.pedropathing:ftc:2.0.0'
+    implementation 'com.pedropathing:telemetry:0.0.6'
 
     implementation 'com.bylazar:fullpanels:1.0.7'
     implementation 'com.bylazar:limelightproxy:1.0.2'

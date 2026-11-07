@@ -3,7 +3,8 @@ package org.firstinspires.ftc.teamcode.Teleops;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.pedropathing.utils.Timer;
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -15,16 +16,14 @@ import org.firstinspires.ftc.teamcode.Mechanisms.PIDFController;
 @TeleOp(name="color testing with shooter!")
 @Config
 public class shootertuning extends OpMode {
-    public static double kp=0.001,ki,kd,kf,targetSpeed;
-    public static double hoodPos;
-    public static double servoPosition=0.1;
+    public static double kp=0.008,ki,kd=0.00001,kf=0.00039,targetSpeed;
     public DcMotorEx launcher;
     public static double DASH_TEST = 1.0;
     public DcMotor transfer;
     public Timer timer = new Timer();
     public double pastTime, pastPosition,pastSpeed;
     public DcMotor intake;
-    public PIDFController speedController = new PIDFController(kp,ki,kd,kf);
+    public PIDController speedController = new PIDController(kp,ki,kd);
     FtcDashboard dashboard;
     public boolean running = false;
 
@@ -57,7 +56,7 @@ public class shootertuning extends OpMode {
 
     @Override
     public void loop() {
-        speedController.setPIDFValues(kp,ki,kd,kf);
+        speedController.setPID(kp,ki,kd);
 
         double currentSpeed = launcher.getVelocity();
         //color.printColor(telemetry);
@@ -96,7 +95,7 @@ public class shootertuning extends OpMode {
             intake.setPower(0);
         }
         if(gamepad1.right_trigger>0.5){
-            transfer.setPower(.8);
+            transfer.setPower(1);
         }else{
             transfer.setPower(0);
         }
@@ -106,12 +105,12 @@ public class shootertuning extends OpMode {
 
         telemetry.addData("shooter speed",currentSpeed);
         telemetry.addData("targetSpeed",targetSpeed);
-        telemetry.addData("power",speedController.run());
+//        telemetry.addData("power",speedController.get());
         telemetry.update();
         //servo.setPosition(servoPosition);
         pastPosition=launcher.getCurrentPosition();
         pastSpeed = currentSpeed;
-        pastTime=timer.seconds();
+        pastTime=timer.getElapsedTimeSeconds();
     }
 
     /*
@@ -121,9 +120,9 @@ public class shootertuning extends OpMode {
     public void stop() {
     }
     public void setLaunchSpeed(double currentSpeed,double targetSpeed){
-        speedController.setTargetPosition(targetSpeed);
-        speedController.updatePosition(currentSpeed);
-        launcher.setPower(speedController.run());
+        double error = currentSpeed - targetSpeed;
+        double val = speedController.calculate(error) + (kf*targetSpeed);
+        launcher.setPower(val);
     }
 
 }
