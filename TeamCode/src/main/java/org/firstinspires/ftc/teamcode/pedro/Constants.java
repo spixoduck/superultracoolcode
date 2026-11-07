@@ -7,8 +7,6 @@ import com.pedropathing.revhub.localizers.CustomIMU;
 import com.pedropathing.revhub.localizers.PinpointLocalizer;
 import com.pedropathing.revhub.localizers.RevHubIMU;
 import com.pedropathing.revhub.localizers.TwoWheelConfig;
-import com.pedropathing.tuning.autotune.Procedure;
-import com.pedropathing.tuning.autotune.Tuner;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -25,10 +23,6 @@ import com.pedropathing.revhub.localizers.PinpointLocalizer;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import org.firstinspires.ftc.teamcode.pedro.procedures.ForesightTuner;
-import org.firstinspires.ftc.teamcode.pedro.procedures.MecanumTuner;
-import org.firstinspires.ftc.teamcode.pedro.procedures.Tests;
 
 
 public class Constants {
@@ -48,13 +42,13 @@ public class Constants {
                 c.manualBrakeMode.set(true);
             }
     );
-    @Tuner
-    public static Procedure tests() {
-        return new Tests(hardwareMap -> new Mecanum(hardwareMap, Constants.drivetrainConfig), null, null);
-    }
-    public static Procedure mecanumTuner() {
-        return new MecanumTuner();
-    }
+//    @Tuner
+//    public static Procedure tests() {
+//        return new Tests(hardwareMap -> new Mecanum(hardwareMap, Constants.drivetrainConfig), null, null);
+//    }
+//    public static Procedure mecanumTuner() {
+//        return new MecanumTuner();
+//    }
     //public static Procedure foresightTuner() {
         //return new ForesightTuner((hardwareMap) -> new PinpointLocalizer(hardwareMap, Constants.localizerConfig), (hardwareMap) -> new Mecanum(hardwareMap, Constants.drivetrainConfig));
     //}

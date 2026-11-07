@@ -1,83 +1,59 @@
 package org.firstinspires.ftc.teamcode.Teleops;
 
-import android.content.Context;
-
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.pedropathing.controllers.PIDController;
 import com.pedropathing.utils.Timer;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.Range;
 
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Mechanisms.ColorSen;
 import org.firstinspires.ftc.teamcode.Mechanisms.PIDFController;
-import org.firstinspires.ftc.teamcode.pedro.Constants;
-import org.firstinspires.ftc.teamcode.Mechanisms.Launcher;
-
-import java.util.concurrent.TimeUnit;
 
 @TeleOp(name="color testing with shooter!")
 @Config
-public class ColorTest extends OpMode {
+public class shootertuning extends OpMode {
     public static double kp=0.001,ki,kd,kf,targetSpeed;
     public static double hoodPos;
     public static double servoPosition=0.1;
     public DcMotor launcher;
+    public static double DASH_TEST = 1.0;
     public DcMotor transfer;
     public Timer timer = new Timer();
     public double pastTime, pastPosition;
     public DcMotor intake;
     public PIDFController speedController = new PIDFController(kp,ki,kd,kf);
-    public boolean julianA = false;
-    public boolean julianB = false;
-    public boolean servOn = false;
-    public Servo servo;
     FtcDashboard dashboard;
-    Telemetry telemetry;
     public boolean running = false;
 
     @Override
     public void init() {
         dashboard = FtcDashboard.getInstance();
-        telemetry = dashboard.getTelemetry();
-        //color.init(hardwareMap, "ColorSen1");
+
+        telemetry = new MultipleTelemetry(
+                telemetry,
+                dashboard.getTelemetry()
+        );
+
         launcher = hardwareMap.get(DcMotor.class, "shoot");
         launcher.setDirection(DcMotorSimple.Direction.REVERSE);
         intake = hardwareMap.get(DcMotor.class,"int");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         transfer=hardwareMap.get(DcMotor.class,"trans");
-
     }
 
-    /*
-     * Code to run REPEATEDLY after the driver hits INIT, but before they hit START
-     */
     @Override
     public void init_loop() {
 
     }
 
-    /*
-     * Code to run ONCE when the driver hits START
-     */
     @Override
     public void start() {
+        telemetry.addData("started", "true");
+        telemetry.update();
     }
 
-    /*
-     * Code to run REPEATEDLY after the driver hits START but before they hit STOP
-     */
     @Override
     public void loop() {
         speedController.setPIDFValues(kp,ki,kd,kf);
@@ -123,6 +99,8 @@ public class ColorTest extends OpMode {
             transfer.setPower(0);
         }
 
+
+        telemetry.addData("dashTest", DASH_TEST);
 
         telemetry.addData("shooter speed",currentSpeed);
         telemetry.addData("targetSpeed",targetSpeed);
