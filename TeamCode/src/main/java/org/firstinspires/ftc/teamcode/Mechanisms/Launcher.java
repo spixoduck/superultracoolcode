@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.Mechanisms;
 
+import com.arcrobotics.ftclib.controller.PIDController;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -8,42 +10,25 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 
 public class Launcher {
-    private DcMotor launcher;
+    private DcMotorEx launcher;
     private Servo hood;
     private Servo switcher;
+    private PIDController speedController;
     private DcMotor turret;
+    private final double kp=0.008 ,kd=0.00001,kf=0.00039;
     private boolean nectarSkibidi;
     //may have to switch direction of motor.
     public void init(HardwareMap hwMap){
-        launcher = hwMap.get(DcMotor.class,"bl"); //change this to shoot
+        speedController = new PIDController(kp,0,kd);
+        launcher = hwMap.get(DcMotorEx.class,"shoot"); //change this to shoot
         launcher.setDirection(DcMotorSimple.Direction.REVERSE);
-        //turret = hwMap.get(DcMotor.class,"turret");
-        //hood = hwMap.get(Servo.class,"hood");
-        //switcher = hwMap.get(Servo.class,"switch");
     }
-//    public boolean changeMode(boolean nectar){
-//        nectarSkibidi=nectar;
-//        if(nectar){
-//            switcher.setPosition(Constants.openPos);
-//        }else{
-//            switcher.setPosition(0);
-//        }
-//        return true;
-//    }
-    public void runMotor(double power){
+    public void setSpeed(double target){
+        double error = launcher.getVelocity() - target;
+        double val = speedController.calculate(error) + (kf*target);
+        launcher.setPower(val);
+    }
+    public void setPower(double power){
         launcher.setPower(power);
-    }
-    public void setHood(double angle){
-        hood.setPosition(angle);
-    }
-    public void setSwitcher(double angle){
-        switcher.setPosition(angle);
-    }
-    public void setTurretAngle(double angle){
-//        turret.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//        turret.setTargetPosition(angle);
-    }
-    public boolean getMode(){
-        return nectarSkibidi;
     }
 }

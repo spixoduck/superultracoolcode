@@ -14,8 +14,8 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.drive.Constants;
 
 
-@Autonomous
-public class test extends OpMode {
+@Autonomous(name="Red Starting Position 2/right Park")
+public class redpark2 extends OpMode {
     public static Follower follower;
 
     static TelemetryManager telemetryM;
@@ -26,7 +26,7 @@ public class test extends OpMode {
     public void init() {
         follower = Constants.createFollower(hardwareMap);
         PanelsConfigurables.INSTANCE.refreshClass(this);
-        follower.setStartingPose(new Pose());
+        follower.setStartingPose(new Pose(36,-72, Math.toRadians(90)));
 
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
     }
@@ -42,10 +42,10 @@ public class test extends OpMode {
     @Override
     public void start() {
         follower.activateAllPIDFs();
-        forwards = new Path(new BezierLine(new Pose(0,0), new Pose(48,0)));
-        forwards.setConstantHeadingInterpolation(0);
-        backwards = new Path(new BezierLine(new Pose(48,0), new Pose(0,0)));
-        backwards.setConstantHeadingInterpolation(0);
+        forwards = new Path(new BezierLine(new Pose(36,-72, Math.toRadians(90)), new Pose(36,-48, Math.toRadians(90))));
+        forwards.setConstantHeadingInterpolation(Math.toRadians(90));
+        backwards = new Path(new BezierLine(new Pose(36,-48, Math.toRadians(90)), new Pose(36,-72, Math.toRadians(90))));
+        backwards.setConstantHeadingInterpolation(Math.toRadians(90));
         follower.followPath(forwards);
     }
 
