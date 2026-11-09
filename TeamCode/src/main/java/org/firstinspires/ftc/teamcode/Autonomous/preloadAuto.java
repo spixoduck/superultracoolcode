@@ -104,16 +104,19 @@ public class preloadAuto extends OpMode {
                     follower.followPath(path2);
                     setPath(3);
                 }
+                break;
             case 3:
                 if(!follower.isBusy()){
                     follower.followPath(path3);
                     setPath(4);
                 }
+                break;
             case 4:
                 if(!follower.isBusy()){
                     follower.followPath(path4);
                     setPath(5);
                 }
+                break;
         }
     }
     public void setPath(int pathNum){
