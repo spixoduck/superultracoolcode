@@ -31,7 +31,7 @@ public class RobotCentricTeleOp extends OpMode {
     public boolean running = false;
     public boolean julianA = false;
     public boolean julianB = false;
-    double kp=0.008 ,kd=0.00001,kf=0.00039;
+    double kp=0.01 ,kd=0,kf=0.00034;
     public PIDController shootController = new PIDController(kp,0,kd);
     @Override
     public void init() {

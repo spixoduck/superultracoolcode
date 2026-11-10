@@ -13,18 +13,25 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.Mechanisms.PIDFController;
 
-@TeleOp(name="color testing with shooter!")
+import java.util.ArrayList;
+
+@TeleOp(name="shooter tuning")
 @Config
 public class shootertuning extends OpMode {
-    public static double kp=0.008 ,ki,kd=0.00001,kf=0.00039,targetSpeed;
+    public ArrayList<Double> speeds = new ArrayList<Double>();
+    int counter =0;
+    double speedSum =0;
+    public static double kp=0.08 ,ki,kd=0.00001,kf=0.00034,targetSpeed;
+    public static int window=10;
     public DcMotorEx launcher;
     public static double DASH_TEST = 1.0;
     public DcMotor transfer;
     public Timer timer = new Timer();
-    public double pastTime, pastPosition,pastSpeed;
+    public double pastPosition,pastSpeed;
     public DcMotor intake;
     public PIDController speedController = new PIDController(kp,ki,kd);
     FtcDashboard dashboard;
+
     public boolean running = false;
 
     @Override
@@ -56,9 +63,15 @@ public class shootertuning extends OpMode {
 
     @Override
     public void loop() {
-        speedController.setPID(kp,ki,kd);
-
+        speedController.setPID(kp, ki, kd);
         double currentSpeed = launcher.getVelocity();
+        speedSum += currentSpeed;
+        telemetry.addData("currentSpeed",currentSpeed);
+        speeds.add(currentSpeed);
+        while (speeds.size() > window){
+            speedSum -= speeds.remove(0);
+        }
+        currentSpeed = speedSum/speeds.size();
         //color.printColor(telemetry);
         //ColorSen.DetectedColor detectedColor = color.getColor();
         //launcher.setSwitcher(servoPosition);
@@ -102,15 +115,14 @@ public class shootertuning extends OpMode {
 
 
         telemetry.addData("dashTest", DASH_TEST);
-
+        telemetry.addData("speedSum",speedSum);
+        telemetry.addData("listSize",speeds.size());
         telemetry.addData("shooter speed",currentSpeed);
         telemetry.addData("targetSpeed",targetSpeed);
 //        telemetry.addData("power",speedController.get());
         telemetry.update();
         //servo.setPosition(servoPosition);
         pastPosition=launcher.getCurrentPosition();
-        pastSpeed = currentSpeed;
-        pastTime=timer.getElapsedTimeSeconds();
     }
 
     /*

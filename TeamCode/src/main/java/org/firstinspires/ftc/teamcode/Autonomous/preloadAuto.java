@@ -29,6 +29,7 @@ public class preloadAuto extends OpMode {
     private Path backwards;
     Launcher launcher = new Launcher();
     boolean launching = true;
+    boolean chrisisgay = true;
 
     @Override
     public void init() {
@@ -41,7 +42,7 @@ public class preloadAuto extends OpMode {
         path2.setConstantHeadingInterpolation(Math.toRadians(90));
         path3 = new Path(new BezierLine(new Pose(24,-3), new Pose(24,-90)));
         path3.setConstantHeadingInterpolation(Math.toRadians(90));
-        path4 = new Path(new BezierLine(new Pose(24,-90), new Pose(48,-90)));
+        path4 = new Path(new BezierLine(new Pose(24,-90), new Pose(40,-90)));
         path4.setConstantHeadingInterpolation(Math.toRadians(90));
         launcher.init(hardwareMap);
         follower = Constants.createFollower(hardwareMap);
@@ -74,7 +75,7 @@ public class preloadAuto extends OpMode {
         followPath();
 
         if(launching){
-            launcher.setSpeed(1950);
+            launcher.setSpeed(2000);
         }else{
             launcher.setPower(0);
         }
@@ -104,16 +105,19 @@ public class preloadAuto extends OpMode {
                     follower.followPath(path2);
                     setPath(3);
                 }
+                break;
             case 3:
                 if(!follower.isBusy()){
                     follower.followPath(path3);
                     setPath(4);
                 }
+                break;
             case 4:
                 if(!follower.isBusy()){
                     follower.followPath(path4);
                     setPath(5);
                 }
+                break;
         }
     }
     public void setPath(int pathNum){
