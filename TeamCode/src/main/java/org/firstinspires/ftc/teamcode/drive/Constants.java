@@ -39,6 +39,8 @@ public class Constants {
             .strafeEncoder_HardwareMapName("bl")
             .strafeEncoderDirection(Encoder.REVERSE)
             .forwardEncoderDirection(Encoder.FORWARD)
+            .forwardPodY(3)
+            .strafePodX(5.51870079)
             .forwardTicksToInches((Math.PI*48)/(25.4*2000))
             .strafeTicksToInches((Math.PI*32)/(25.4*2000))
             .IMU_HardwareMapName("imu")
