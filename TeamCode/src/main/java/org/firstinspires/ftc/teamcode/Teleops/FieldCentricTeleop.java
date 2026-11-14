@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.Teleops;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.arcrobotics.ftclib.controller.PIDController;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -13,17 +16,22 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.Mechanisms.Launcher;
 import org.firstinspires.ftc.teamcode.Mechanisms.Transfer;
+import org.firstinspires.ftc.teamcode.drive.Constants;
 
-@TeleOp(name="don't use")
+@TeleOp(name="Auto Aim testing fieldcentric")
 @Config
 public class FieldCentricTeleop extends OpMode {
+    public static double kp, ki, kd, targetAngle;
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry telemetry = dashboard.getTelemetry();
     DcMotor frontLeftMotor;
     DcMotor backLeftMotor;
     DcMotor frontRightMotor;
     DcMotor backRightMotor;
+    Follower follower;
     IMU imu;
+    boolean autoAim = false;
+    PIDController rotationController = new PIDController(kp,ki,kd);
 //    public boolean running = false;
 //    public Launcher launcher = new Launcher();
 //    public Transfer transfer = new Transfer();
@@ -31,19 +39,21 @@ public class FieldCentricTeleop extends OpMode {
 //    public boolean julianB = false;
     @Override
     public void init() {
+        follower = Constants.createFollower(hardwareMap);
+        follower.setStartingPose(new Pose(36,12,0));
         frontLeftMotor = hardwareMap.dcMotor.get("fl");
         backLeftMotor = hardwareMap.dcMotor.get("bl");
         frontRightMotor = hardwareMap.dcMotor.get("fr");
         backRightMotor = hardwareMap.dcMotor.get("br");
-        //imu  = hardwareMap.get(IMU.class, "imu");
+        imu  = hardwareMap.get(IMU.class, "imu");
         frontRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         backRightMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        // Adjust the orientation parameters to match your robot
-//        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-//                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-//                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD));
-//        // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-//        imu.initialize(parameters);
+
+        // initializing IMU, can probably replace all of the IMU code with currentPosition.getHeading() but i wouldn't know how to reset heading for that so for teleop this is prolly better until I figure that out;
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
+                RevHubOrientationOnRobot.UsbFacingDirection.DOWN));
+        imu.initialize(parameters);
 
 //        launcher.init(hardwareMap);
 //        transfer.init(hardwareMap);
@@ -70,16 +80,28 @@ public class FieldCentricTeleop extends OpMode {
      */
     @Override
     public void loop() {
-        double y = -gamepad1.left_stick_y; // Remember, Y stick value is reversed
+        Pose currentPose = follower.getPose();
+        rotationController.setPID(kp,ki,kd); // setting the pid coefficients so they actually change when you change them in dashboard
+        follower.update(); //updates the follower.  you: "no way say ong rn"
+        double y = -gamepad1.left_stick_y;
         double x = gamepad1.left_stick_x;
-        double rx = gamepad1.right_stick_x;
-//        if (gamepad1.options) {
-//            imu.resetYaw();
-//        }
+        // resets the imu so you can manually set frame of reference or forwards backwards and such
+        //now that I think about it putting this in our auto code would eliminate the need to reset the robot all the time
+        if (gamepad1.options) {
+            imu.resetYaw();
+        }
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        //this is just the difference between our current heading and the heading we want (towards the goal) it's just a changeable variable for now for tuning purposes
+        double error = botHeading - targetAngle; //after testing replace targetAngle with Math.atan2(Hive.getY()-currentPosition.getY(),Hive.getX()-currentPosition.getX())
+        //this is what the rotation component of the robot will be, it checks if autoAim is true or false and either makes it change due to player input or the PIDController
+        double rx = autoAim ? rotationController.calculate(error) : gamepad1.right_stick_x; // this is a trick I learned from leetcode lmao
+        //another way to write this is
+        //if(autoAim)
+        //    rx=val;
+        //else
+        //    rx=gamepad1.right_stick_x;
 
-        // Rotate the movement direction counter to the bot's rotation
-        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading); //part of fieldcentric code. this is a rotation matrix, just rotates x and y so that they're the same no matter orientation of the robot
         double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
         rotX = rotX * 1.1;
@@ -92,41 +114,10 @@ public class FieldCentricTeleop extends OpMode {
         backLeftMotor.setPower(backLeftPower);
         frontRightMotor.setPower(frontRightPower);
         backRightMotor.setPower(backRightPower);
-//        if(gamepad1.left_trigger>0.5){
-//            transfer.in();
-//        }
-//        else if(gamepad1.right_trigger>.5) {
-//            transfer.out();
-//        }else{
-//            transfer.stop();
-//        }
-//        if (gamepad1.a && !julianA) {
-//            julianA = true;
-//            if (!running) {
-//                launcher.runMotor(1);
-//                running = true;
-//            } else {
-//                launcher.runMotor(0);
-//                running = false;
-//            }
-//        }
-//        if (!gamepad1.a) {
-//            julianA = false;
-//        }
-//        if (gamepad1.b && !julianB) {
-//            julianB = true;
-//            if(launcher.getMode()) {
-//                launcher.changeMode(false);
-//            }
-//            else{
-//                launcher.changeMode(true);
-//            }
-//        }
-//        //launcher.setSwitcher(servoPosition);
-//        //launcher.setHood(hoodPos);
-//        if (!gamepad1.b) {
-//            julianB = false;
-//        }
+        autoAim=gamepad1.a;
+        //telemetry to make sure our follower is giving us the right data.
+        telemetry.addData("currentPos",currentPose.getX()+ ", "+currentPose.getY() + ", "+ currentPose.getHeading());
+        telemetry.update();
     }
 
     /*

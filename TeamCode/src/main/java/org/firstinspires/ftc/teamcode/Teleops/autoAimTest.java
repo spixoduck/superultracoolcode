@@ -95,7 +95,6 @@ public class autoAimTest extends OpMode {
 //
 //        follower.(y, x, rx);
 //        follower.update();
-        double currentSpeed = launcher.getVelocity();
         // Rotate the movement direction counter to the bot's rotation
 
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
