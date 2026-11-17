@@ -39,7 +39,7 @@ public class Constants {
             .strafeEncoder_HardwareMapName("bl")
             .strafeEncoderDirection(Encoder.FORWARD)
             .forwardEncoderDirection(Encoder.FORWARD)
-            .forwardPodY(-6.614)
+            .forwardPodY(-5.7086)
             .strafePodX(0)
             .forwardTicksToInches((Math.PI*48)/(25.4*2000))
             .strafeTicksToInches((Math.PI*32)/(25.4*2000))

@@ -51,7 +51,7 @@ public class autoAimTest extends OpMode {
         intake = hardwareMap.get(DcMotor.class,"int");
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         transfer=hardwareMap.get(DcMotor.class,"trans");
-        follower.setStartingPose(new Pose(36,12,0));
+        follower.setStartingPose(new Pose(12,36,Math.toRadians(90)));
         currentPosition = follower.getPose();
     }
 
