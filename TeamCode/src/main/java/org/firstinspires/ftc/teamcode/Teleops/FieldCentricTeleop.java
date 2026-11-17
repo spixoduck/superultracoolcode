@@ -21,7 +21,7 @@ import org.firstinspires.ftc.teamcode.drive.Constants;
 @TeleOp(name="Auto Aim testing fieldcentric")
 @Config
 public class FieldCentricTeleop extends OpMode {
-    public static double kp, ki, kd, targetAngle;
+    public static double kp=1, ki, kd, targetAngle;
     FtcDashboard dashboard = FtcDashboard.getInstance();
     Telemetry telemetry = dashboard.getTelemetry();
     DcMotor frontLeftMotor;
@@ -30,6 +30,8 @@ public class FieldCentricTeleop extends OpMode {
     DcMotor backRightMotor;
     Follower follower;
     IMU imu;
+    double minPos=36;
+    double maxPos=36;
     boolean autoAim = false;
     PIDController rotationController = new PIDController(kp,ki,kd);
 //    public boolean running = false;
@@ -92,7 +94,8 @@ public class FieldCentricTeleop extends OpMode {
         }
         double botHeading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         //this is just the difference between our current heading and the heading we want (towards the goal) it's just a changeable variable for now for tuning purposes
-        double error = botHeading - targetAngle; //after testing replace targetAngle with Math.atan2(Hive.getY()-currentPosition.getY(),Hive.getX()-currentPosition.getX())
+        targetAngle = Math.atan2(36-currentPose.getY(),36-currentPose.getX());
+        double error = polarDistance(botHeading,targetAngle); //after testing replace targetAngle with Math.atan2(36-currentPosition.getY(),36-currentPosition.getX())
         //this is what the rotation component of the robot will be, it checks if autoAim is true or false and either makes it change due to player input or the PIDController
         double rx = autoAim ? rotationController.calculate(error) : gamepad1.right_stick_x; // this is a trick I learned from leetcode lmao
         //another way to write this is
@@ -116,10 +119,15 @@ public class FieldCentricTeleop extends OpMode {
         backRightMotor.setPower(backRightPower);
         autoAim=gamepad1.a;
         //telemetry to make sure our follower is giving us the right data.
+        minPos = Math.min(currentPose.getX(),minPos);
+        maxPos = Math.max(currentPose.getX(),maxPos);
         telemetry.addData("currentPos",currentPose.getX()+ ", "+currentPose.getY() + ", "+ currentPose.getHeading());
+        telemetry.addData("range",maxPos-minPos);
         telemetry.update();
     }
-
+    public double polarDistance(double angle1, double angle2){
+        return Math.acos(Math.cos(angle1-angle2))*Math.signum(Math.sin(angle2-angle1));
+    }
     /*
      * Code to run ONCE after the driver hits STOP
      */
